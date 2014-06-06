@@ -2,6 +2,7 @@ package main;
 
 import java.awt.EventQueue;
 
+import javax.sound.sampled.*;
 import javax.swing.JFrame;
 import javax.swing.JToolBar;
 import javax.swing.JButton;
@@ -10,20 +11,31 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.JScrollPane;
 import javax.swing.JPanel;
+
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.RowSpec;
 import com.jgoodies.forms.factories.FormFactory;
 
+import java.awt.Font;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+
 public class MainWindow {
 
 	private JFrame frame;
-	static JButton[] button;
-
+	static JButton[][] button;
+	static JScrollPane scrollPane = new JScrollPane();
+	static JPanel panel = new JPanel();
+	static int rows;
+	static int cols;
+	
 	/**
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
+		rows=10;
+		cols=10;
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -40,42 +52,79 @@ public class MainWindow {
 	 * Create the application.
 	 */
 	public MainWindow() {
-		initialize(10,10);
+		initialize();
 	}
 
 	/**
 	 * Initialize the contents of the frame.
 	 */
-	private void initialize(int rowsOfButtons, int colsOfButtons) {
+	private void initialize() {
 		frame = new JFrame();
 		frame.setBounds(100, 100, 551, 283);
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		
-		JScrollPane scrollPane = new JScrollPane();
-		
 		JToolBar toolBar = new JToolBar();
+		toolBar.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		toolBar.setFloatable(false);
 		GroupLayout groupLayout = new GroupLayout(frame.getContentPane());
 		groupLayout.setHorizontalGroup(
 			groupLayout.createParallelGroup(Alignment.LEADING)
-				.addGroup(groupLayout.createSequentialGroup()
+				.addGroup(Alignment.TRAILING, groupLayout.createSequentialGroup()
 					.addContainerGap()
-					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-						.addComponent(toolBar, GroupLayout.PREFERRED_SIZE, 242, GroupLayout.PREFERRED_SIZE)
-						.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 535, Short.MAX_VALUE))
+					.addGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
+						.addComponent(scrollPane, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 515, Short.MAX_VALUE)
+						.addComponent(toolBar, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 515, Short.MAX_VALUE))
 					.addContainerGap())
 		);
 		groupLayout.setVerticalGroup(
 			groupLayout.createParallelGroup(Alignment.LEADING)
 				.addGroup(groupLayout.createSequentialGroup()
-					.addComponent(toolBar, GroupLayout.PREFERRED_SIZE, 0, GroupLayout.PREFERRED_SIZE)
+					.addContainerGap()
+					.addComponent(toolBar, GroupLayout.PREFERRED_SIZE, 27, GroupLayout.PREFERRED_SIZE)
 					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 245, Short.MAX_VALUE)
+					.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 190, Short.MAX_VALUE)
 					.addContainerGap())
 		);
 		
-		JPanel panel = new JPanel();
+		JButton btnAssignButton = new JButton("Assign button");
+		btnAssignButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				AssignButton.launch();
+			}
+		});
+		btnAssignButton.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		toolBar.add(btnAssignButton);
+		
+		JButton btnSaveButtonGrid = new JButton("Save button grid");
+		btnSaveButtonGrid.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+			}
+		});
+		btnSaveButtonGrid.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		toolBar.add(btnSaveButtonGrid);
+		
+		JButton btnAddremoveButtons = new JButton("Add/remove buttons");
+		btnAddremoveButtons.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				AddRemoveButtons.launch(rows, cols);
+			}
+		});
+		btnAddremoveButtons.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		toolBar.add(btnAddremoveButtons);
+		
 		scrollPane.setViewportView(panel);
+		
+		loadButtons(rows, cols);
+		
+		frame.getContentPane().setLayout(groupLayout);
+	}
+	static void loadButtons(int colsOfButtons, int rowsOfButtons) {
+		panel.removeAll();
+		rows=rowsOfButtons;
+		cols=colsOfButtons;
+		colsOfButtons*=2;
+		rowsOfButtons*=2;
+		button = new JButton[colsOfButtons][rowsOfButtons];
 		ColumnSpec[] col = new ColumnSpec[colsOfButtons];
 		for (int i=0; i<colsOfButtons; i+=2) {
 			col[i]=FormFactory.RELATED_GAP_COLSPEC;
@@ -88,12 +137,33 @@ public class MainWindow {
 		}
 		panel.setLayout(new FormLayout(col, row));
 		
-		for (int i=2; i<=colsOfButtons; i+=2) {
-			for (int c=2; c<=rowsOfButtons; c+=2) {
-				JButton btnNewButton = new JButton("Unassigned");
-				panel.add(btnNewButton, i + "," + c + ", default, fill");
+		for (int c=2; c<=colsOfButtons; c+=2) {
+			for (int i=2; i<=rowsOfButtons; i+=2) {
+				button[c/2][i/2] = new JButton((c/2) + ", " + (i/2) + "  Unassigned");
+				button[c/2][i/2].setFont(new Font("Tahoma", Font.PLAIN, 11));
+				panel.add(button[c/2][i/2], c + "," + i + ", default, fill");
 			}
-		};
-		frame.getContentPane().setLayout(groupLayout);
+		}
+		panel.revalidate();
 	}
+	static void assignFileToButton(String file, int buttonX, int buttonY) {
+		
+	}
+//	public static synchronized void playSound(final String url) {
+//		  new Thread(new Runnable() {
+//		  // The wrapper thread is unnecessary, unless it blocks on the
+//		  // Clip finishing; see comments.
+//		    public void run() {
+//		      try {
+//		        Clip clip = AudioSystem.getClip();
+//		        AudioInputStream inputStream = AudioSystem.getAudioInputStream(
+//		          //MainWindow.getResourceAsStream("/path/to/sounds/" + url));
+//		        clip.open(inputStream);
+//		        clip.start(); 
+//		      } catch (Exception e) {
+//		        System.err.println(e.getMessage());
+//		      }
+//		    }
+//		  }).start();
+//		}
 }
