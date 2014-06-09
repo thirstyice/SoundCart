@@ -20,11 +20,15 @@ import com.jgoodies.forms.factories.FormFactory;
 import java.awt.Font;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.Arrays;
 
 public class MainWindow {
 
 	private JFrame frame;
 	static JButton[][] button;
+	static String[][] sound;
 	static JScrollPane scrollPane = new JScrollPane();
 	static JPanel panel = new JPanel();
 	static int rows;
@@ -36,6 +40,7 @@ public class MainWindow {
 	public static void main(String[] args) {
 		rows=10;
 		cols=10;
+		sound = new String[rows*2][cols*2];
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -124,7 +129,28 @@ public class MainWindow {
 		cols=colsOfButtons;
 		colsOfButtons*=2;
 		rowsOfButtons*=2;
-		button = new JButton[colsOfButtons][rowsOfButtons];
+		
+		
+		String[][] backup = new String[rowsOfButtons][colsOfButtons];
+		int shorterLength;
+		int shorterWidth;
+		if (backup[0].length<sound[0].length) {
+			shorterLength=backup[0].length;
+		} else {
+			shorterLength=sound[0].length;
+		}
+		if (backup.length<sound.length) {
+			shorterWidth=backup.length;
+		} else {
+			shorterWidth=sound.length;
+		}
+		for (int c =0;c<shorterWidth;c++) {
+			System.arraycopy(sound[c], 0, backup[c], 0, shorterLength);
+		}
+		sound = backup;
+		
+		
+		button = new JButton[rowsOfButtons][colsOfButtons];
 		ColumnSpec[] col = new ColumnSpec[colsOfButtons];
 		for (int i=0; i<colsOfButtons; i+=2) {
 			col[i]=FormFactory.RELATED_GAP_COLSPEC;
@@ -137,33 +163,40 @@ public class MainWindow {
 		}
 		panel.setLayout(new FormLayout(col, row));
 		
-		for (int c=2; c<=colsOfButtons; c+=2) {
-			for (int i=2; i<=rowsOfButtons; i+=2) {
-				button[c/2][i/2] = new JButton((c/2) + ", " + (i/2) + "  Unassigned");
-				button[c/2][i/2].setFont(new Font("Tahoma", Font.PLAIN, 11));
-				panel.add(button[c/2][i/2], c + "," + i + ", default, fill");
+		for (int c=2; c<=rowsOfButtons; c+=2) {
+			for (int i=2; i<=colsOfButtons; i+=2) {
+				final int colNum = i/2;
+				final int rowNum = c/2;
+				button[rowNum][colNum] = new JButton(rowNum + ", " + colNum + "  Unassigned");
+				button[rowNum][colNum].setFont(new Font("Tahoma", Font.PLAIN, 11));
+				button[rowNum][colNum].addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						soundButtonWasPushed(rowNum, colNum);
+					}
+				});
+				panel.add(button[rowNum][colNum], i + "," + c + ", default, fill");
 			}
 		}
 		panel.revalidate();
 	}
 	static void assignFileToButton(String file, int buttonX, int buttonY) {
-		
+		sound[buttonX][buttonY] = file;
 	}
-//	public static synchronized void playSound(final String url) {
-//		  new Thread(new Runnable() {
-//		  // The wrapper thread is unnecessary, unless it blocks on the
-//		  // Clip finishing; see comments.
-//		    public void run() {
-//		      try {
-//		        Clip clip = AudioSystem.getClip();
-//		        AudioInputStream inputStream = AudioSystem.getAudioInputStream(
-//		          //MainWindow.getResourceAsStream("/path/to/sounds/" + url));
-//		        clip.open(inputStream);
-//		        clip.start(); 
-//		      } catch (Exception e) {
-//		        System.err.println(e.getMessage());
-//		      }
-//		    }
-//		  }).start();
-//		}
+	static void soundButtonWasPushed(int row, int col) {
+		MainWindow deComplicator=new MainWindow();
+		deComplicator.playSound(sound[row][col]);
+	}
+	void playSound(final String url) {
+		try{
+			URL place = new URL("file:///"  +url);//only handles midi so far, maybe some other formats
+			AudioInputStream audioInputStream =AudioSystem.getAudioInputStream(place);
+			Clip clip = AudioSystem.getClip();
+			clip.open(audioInputStream);
+			clip.start( );
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
 }
