@@ -171,10 +171,9 @@ public class MainWindow {
 				button[rowNum][colNum].setFont(new Font("Tahoma", Font.PLAIN, 11));
 				button[rowNum][colNum].addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						Sound deComplicator=new Sound();
-						Sound.row=rowNum;
-						Sound.col=colNum;
-						deComplicator.run();
+						Sound sound=new Sound();
+						sound.url=MainWindow.sound[rowNum][colNum];
+						sound.run();
 					}
 				});
 				panel.add(button[rowNum][colNum], i + "," + c + ", default, fill");
