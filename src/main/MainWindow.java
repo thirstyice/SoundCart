@@ -171,7 +171,10 @@ public class MainWindow {
 				button[rowNum][colNum].setFont(new Font("Tahoma", Font.PLAIN, 11));
 				button[rowNum][colNum].addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						soundButtonWasPushed(rowNum, colNum);
+						Sound deComplicator=new Sound();
+						Sound.row=rowNum;
+						Sound.col=colNum;
+						deComplicator.run();
 					}
 				});
 				panel.add(button[rowNum][colNum], i + "," + c + ", default, fill");
@@ -181,22 +184,5 @@ public class MainWindow {
 	}
 	static void assignFileToButton(String file, int buttonX, int buttonY) {
 		sound[buttonX][buttonY] = file;
-	}
-	static void soundButtonWasPushed(int row, int col) {
-		MainWindow deComplicator=new MainWindow();
-		deComplicator.playSound(sound[row][col]);
-	}
-	void playSound(final String url) {
-		try{
-			URL place = new URL("file:///"  +url);//only handles midi so far, maybe some other formats
-			AudioInputStream audioInputStream =AudioSystem.getAudioInputStream(place);
-			Clip clip = AudioSystem.getClip();
-			clip.open(audioInputStream);
-			clip.start( );
-		}
-		catch(Exception e)
-		{
-			e.printStackTrace();
-		}
 	}
 }
