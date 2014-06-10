@@ -19,6 +19,7 @@ import com.jgoodies.forms.factories.FormFactory;
 import java.awt.Font;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import javax.swing.JLabel;
 
 public class MainWindow {
 
@@ -67,14 +68,17 @@ public class MainWindow {
 		
 		JToolBar toolBar = new JToolBar();
 		toolBar.setFloatable(false);
+		
+		JLabel lblReady = new JLabel("Ready");
 		GroupLayout groupLayout = new GroupLayout(frame.getContentPane());
 		groupLayout.setHorizontalGroup(
-			groupLayout.createParallelGroup(Alignment.LEADING)
-				.addGroup(Alignment.TRAILING, groupLayout.createSequentialGroup()
+			groupLayout.createParallelGroup(Alignment.TRAILING)
+				.addGroup(groupLayout.createSequentialGroup()
 					.addContainerGap()
 					.addGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
 						.addComponent(scrollPane, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 515, Short.MAX_VALUE)
-						.addComponent(toolBar, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 515, Short.MAX_VALUE))
+						.addComponent(toolBar, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 515, Short.MAX_VALUE)
+						.addComponent(lblReady, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 515, Short.MAX_VALUE))
 					.addContainerGap())
 		);
 		groupLayout.setVerticalGroup(
@@ -83,8 +87,10 @@ public class MainWindow {
 					.addContainerGap()
 					.addComponent(toolBar, GroupLayout.PREFERRED_SIZE, 27, GroupLayout.PREFERRED_SIZE)
 					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 190, Short.MAX_VALUE)
-					.addContainerGap())
+					.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 176, Short.MAX_VALUE)
+					.addGap(3)
+					.addComponent(lblReady, GroupLayout.PREFERRED_SIZE, 14, GroupLayout.PREFERRED_SIZE)
+					.addGap(5))
 		);
 		
 		JButton btnAssignButton = new JButton("Assign button");
@@ -115,7 +121,7 @@ public class MainWindow {
 		
 		scrollPane.setViewportView(panel);
 		
-		loadButtons(rows, cols);
+		//loadButtons(rows, cols);
 		
 		frame.getContentPane().setLayout(groupLayout);
 	}
@@ -178,6 +184,9 @@ public class MainWindow {
 		panel.revalidate();
 	}
 	static void assignFileToButton(String file, int buttonX, int buttonY) {
-		sound[buttonX][buttonY] = file;
+		String extension = file.substring(file.lastIndexOf(".") + 1, file.length());
+		if (extension.equals("wav")||extension.equals(mid)||extension.equals(midi)) {
+			sound[buttonX][buttonY] = file;
+		} 
 	}
 }
