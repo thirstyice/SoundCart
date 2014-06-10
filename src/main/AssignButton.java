@@ -12,7 +12,6 @@ import javax.swing.JLabel;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import java.io.File;
 
 public class AssignButton extends JDialog {
 
@@ -47,6 +46,7 @@ public class AssignButton extends JDialog {
 		
 		filePath = new JTextField();
 		filePath.setBounds(10, 23, 331, 20);
+		filePath.setFont(MainWindow.mainFont);
 		contentPanel.add(filePath);
 		filePath.setColumns(10);
 		
@@ -54,6 +54,7 @@ public class AssignButton extends JDialog {
 		btnBrowse.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JFileChooser fileChooser = new JFileChooser();
+				fileChooser.setFont(MainWindow.mainFont);
 				int status = fileChooser.showOpenDialog(null);
 				if (status == JFileChooser.APPROVE_OPTION) {
 					filePath.setText(fileChooser.getSelectedFile().getAbsolutePath());
@@ -64,27 +65,33 @@ public class AssignButton extends JDialog {
 			}
 		});
 		btnBrowse.setBounds(347, 22, 89, 23);
+		btnBrowse.setFont(MainWindow.mainFont);
 		contentPanel.add(btnBrowse);
 		
 		JLabel lblSelectFile = new JLabel("Select file:");
 		lblSelectFile.setBounds(10, 5, 69, 14);
+		lblSelectFile.setFont(MainWindow.mainFont);
 		contentPanel.add(lblSelectFile);
 
 		JLabel lblButtonLocation = new JLabel("Select button location:");
 		lblButtonLocation.setBounds(10, 49, 116, 14);
+		lblButtonLocation.setFont(MainWindow.mainFont);
 		contentPanel.add(lblButtonLocation);
 		
 		buttonX = new JTextField();
 		buttonX.setBounds(124, 49, 26, 20);
+		buttonX.setFont(MainWindow.mainFont);
 		contentPanel.add(buttonX);
 		buttonX.setColumns(10);
 		
 		JLabel label = new JLabel(",");
 		label.setBounds(157, 52, 10, 14);
+		label.setFont(MainWindow.mainFont);
 		contentPanel.add(label);
 		
 		buttonY = new JTextField();
 		buttonY.setBounds(173, 49, 26, 20);
+		buttonY.setFont(MainWindow.mainFont);
 		contentPanel.add(buttonY);
 		buttonY.setColumns(10);
 		
@@ -96,6 +103,7 @@ public class AssignButton extends JDialog {
 			}
 		});
 		btnOk.setBounds(237, 49, 50, 23);
+		btnOk.setFont(MainWindow.mainFont);
 		contentPanel.add(btnOk);
 		
 		JButton btnCancel = new JButton("Cancel");
@@ -105,6 +113,7 @@ public class AssignButton extends JDialog {
 			}
 		});
 		btnCancel.setBounds(293, 49, 69, 23);
+		btnCancel.setFont(MainWindow.mainFont);
 		contentPanel.add(btnCancel);
 	}
 }

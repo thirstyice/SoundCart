@@ -2,7 +2,6 @@ package main;
 
 import java.awt.EventQueue;
 
-import javax.sound.sampled.*;
 import javax.swing.JFrame;
 import javax.swing.JToolBar;
 import javax.swing.JButton;
@@ -20,9 +19,6 @@ import com.jgoodies.forms.factories.FormFactory;
 import java.awt.Font;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.Arrays;
 
 public class MainWindow {
 
@@ -30,6 +26,7 @@ public class MainWindow {
 	static JButton[][] button;
 	static String[][] sound;
 	static JScrollPane scrollPane = new JScrollPane();
+	static Font mainFont = new Font("Liberation Sans", Font.PLAIN, 11);
 	static JPanel panel = new JPanel();
 	static int rows;
 	static int cols;
@@ -69,7 +66,6 @@ public class MainWindow {
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		
 		JToolBar toolBar = new JToolBar();
-		toolBar.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		toolBar.setFloatable(false);
 		GroupLayout groupLayout = new GroupLayout(frame.getContentPane());
 		groupLayout.setHorizontalGroup(
@@ -97,7 +93,7 @@ public class MainWindow {
 				AssignButton.launch();
 			}
 		});
-		btnAssignButton.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		btnAssignButton.setFont(mainFont);
 		toolBar.add(btnAssignButton);
 		
 		JButton btnSaveButtonGrid = new JButton("Save button grid");
@@ -105,7 +101,7 @@ public class MainWindow {
 			public void actionPerformed(ActionEvent arg0) {
 			}
 		});
-		btnSaveButtonGrid.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		btnSaveButtonGrid.setFont(mainFont);
 		toolBar.add(btnSaveButtonGrid);
 		
 		JButton btnAddremoveButtons = new JButton("Add/remove buttons");
@@ -114,7 +110,7 @@ public class MainWindow {
 				AddRemoveButtons.launch(rows, cols);
 			}
 		});
-		btnAddremoveButtons.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		btnAddremoveButtons.setFont(mainFont);
 		toolBar.add(btnAddremoveButtons);
 		
 		scrollPane.setViewportView(panel);
@@ -168,7 +164,7 @@ public class MainWindow {
 				final int colNum = i/2;
 				final int rowNum = c/2;
 				button[rowNum][colNum] = new JButton(rowNum + ", " + colNum + "  Unassigned");
-				button[rowNum][colNum].setFont(new Font("Tahoma", Font.PLAIN, 11));
+				button[rowNum][colNum].setFont(mainFont);
 				button[rowNum][colNum].addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						Sound sound=new Sound();

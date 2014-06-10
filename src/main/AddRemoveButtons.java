@@ -42,12 +42,12 @@ public class AddRemoveButtons extends JDialog {
 		getContentPane().setLayout(null);
 		
 		JLabel lblOldGridSize = new JLabel("Old grid size:");
-		lblOldGridSize.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		lblOldGridSize.setFont(MainWindow.mainFont);
 		lblOldGridSize.setBounds(10, 48, 68, 14);
 		getContentPane().add(lblOldGridSize);
 		
 		JLabel lblNewGridSize = new JLabel("New grid size:");
-		lblNewGridSize.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		lblNewGridSize.setFont(MainWindow.mainFont);
 		lblNewGridSize.setBounds(138, 48, 68, 14);
 		getContentPane().add(lblNewGridSize);
 		
@@ -57,33 +57,33 @@ public class AddRemoveButtons extends JDialog {
 		getContentPane().add(lblCautionYouWill);
 		
 		JLabel lblWide = new JLabel(oldCols+" Wide");
-		lblWide.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		lblWide.setFont(MainWindow.mainFont);
 		lblWide.setBounds(10, 73, 46, 14);
 		getContentPane().add(lblWide);
 		
 		JLabel lblTall = new JLabel(oldRows+" Tall");
-		lblTall.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		lblTall.setFont(MainWindow.mainFont);
 		lblTall.setBounds(10, 93, 46, 14);
 		getContentPane().add(lblTall);
 		
 		JLabel label = new JLabel("Tall");
-		label.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		label.setFont(MainWindow.mainFont);
 		label.setBounds(227, 93, 46, 14);
 		getContentPane().add(label);
 		
 		JLabel label_1 = new JLabel("Wide");
-		label_1.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		label_1.setFont(MainWindow.mainFont);
 		label_1.setBounds(227, 73, 46, 14);
 		getContentPane().add(label_1);
 		
 		widthText = new JTextField();
-		widthText.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		widthText.setFont(MainWindow.mainFont);
 		widthText.setBounds(135, 70, 86, 20);
 		getContentPane().add(widthText);
 		widthText.setColumns(10);
 		
 		heightText = new JTextField();
-		heightText.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		heightText.setFont(MainWindow.mainFont);
 		heightText.setBounds(135, 90, 86, 20);
 		getContentPane().add(heightText);
 		heightText.setColumns(10);
@@ -95,7 +95,7 @@ public class AddRemoveButtons extends JDialog {
 				dispose();
 			}
 		});
-		btnOk.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		btnOk.setFont(MainWindow.mainFont);
 		btnOk.setBounds(291, 84, 89, 23);
 		getContentPane().add(btnOk);
 		
@@ -105,7 +105,7 @@ public class AddRemoveButtons extends JDialog {
 				dispose();
 			}
 		});
-		btnCancel.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		btnCancel.setFont(MainWindow.mainFont);
 		btnCancel.setBounds(291, 59, 89, 23);
 		getContentPane().add(btnCancel);
 
