@@ -9,6 +9,8 @@ import javax.swing.JTextField;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import org.eclipse.wb.swing.FocusTraversalOnArray;
+import java.awt.Component;
 
 public class AddRemoveButtons extends JDialog {
 	private JTextField widthText;
@@ -43,12 +45,12 @@ public class AddRemoveButtons extends JDialog {
 		
 		JLabel lblOldGridSize = new JLabel("Old grid size:");
 		lblOldGridSize.setFont(MainWindow.mainFont);
-		lblOldGridSize.setBounds(10, 48, 68, 14);
+		lblOldGridSize.setBounds(10, 48, 92, 14);
 		getContentPane().add(lblOldGridSize);
 		
 		JLabel lblNewGridSize = new JLabel("New grid size:");
 		lblNewGridSize.setFont(MainWindow.mainFont);
-		lblNewGridSize.setBounds(138, 48, 68, 14);
+		lblNewGridSize.setBounds(138, 48, 96, 14);
 		getContentPane().add(lblNewGridSize);
 		
 		JLabel lblCautionYouWill = new JLabel("Caution: you will lose all button assignments");
@@ -108,6 +110,7 @@ public class AddRemoveButtons extends JDialog {
 		btnCancel.setFont(MainWindow.mainFont);
 		btnCancel.setBounds(291, 59, 89, 23);
 		getContentPane().add(btnCancel);
+		setFocusTraversalPolicy(new FocusTraversalOnArray(new Component[]{getContentPane(), lblOldGridSize, lblNewGridSize, lblCautionYouWill, lblWide, lblTall, label, label_1}));
 
 	}
 }

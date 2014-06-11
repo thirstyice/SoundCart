@@ -1,7 +1,9 @@
 package main;
 
+import java.awt.Color;
 import java.awt.EventQueue;
 
+import javax.swing.JColorChooser;
 import javax.swing.JFrame;
 import javax.swing.JToolBar;
 import javax.swing.JButton;
@@ -19,26 +21,25 @@ import com.jgoodies.forms.factories.FormFactory;
 import java.awt.Font;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+
 import javax.swing.JLabel;
 
 public class MainWindow {
 
-	private JFrame frame;
+	JFrame frame;
 	static JButton[][] button;
-	static String[][] sound;
 	static JScrollPane scrollPane = new JScrollPane();
 	static Font mainFont = new Font("Liberation Sans", Font.PLAIN, 11);
 	static JPanel panel = new JPanel();
-	static int rows;
-	static int cols;
+	static int rows = 10;
+	static int cols = 10;
+	static String[][] sound = new String[rows*2][cols*2];;
+	static MainWindow window = new MainWindow();
 	
 	/**
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
-		rows=10;
-		cols=10;
-		sound = new String[rows*2][cols*2];
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -65,6 +66,7 @@ public class MainWindow {
 		frame = new JFrame();
 		frame.setBounds(100, 100, 551, 283);
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		
 		
 		JToolBar toolBar = new JToolBar();
 		toolBar.setFloatable(false);
@@ -118,6 +120,14 @@ public class MainWindow {
 		});
 		btnAddremoveButtons.setFont(mainFont);
 		toolBar.add(btnAddremoveButtons);
+		
+		JButton btnChangeColor = new JButton("Change color");
+		btnChangeColor.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				ButtonColorChooser.launch();
+			}
+		});
+		toolBar.add(btnChangeColor);
 		
 		scrollPane.setViewportView(panel);
 		
@@ -184,9 +194,12 @@ public class MainWindow {
 		panel.revalidate();
 	}
 	static void assignFileToButton(String file, int buttonX, int buttonY) {
-		String extension = file.substring(file.lastIndexOf(".") + 1, file.length());
-		if (extension.equals("wav")||extension.equals(mid)||extension.equals(midi)) {
-			sound[buttonX][buttonY] = file;
-		} 
+		sound[buttonX][buttonY] = file;
+	}
+	static void assignNameToButton(String name, int buttonX, int buttonY) {
+		button[buttonX][buttonY].setText(buttonX + ", " + buttonY + " " + name);
+	}
+	static void assignColorToButton(Color color, int buttonX, int buttonY) {
+		button[buttonX][buttonY].setBackground(color);
 	}
 }

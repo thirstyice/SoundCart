@@ -3,6 +3,7 @@ package main;
 import java.net.URL;
 
 import javax.sound.sampled.*;
+import javax.swing.JOptionPane;
 
 public class Sound implements Runnable {
 	String url;
@@ -13,12 +14,12 @@ public class Sound implements Runnable {
 			Clip clip = AudioSystem.getClip();
 			clip.open(audioInputStream);
 			clip.start( );
-		} catch(UnsupportedAudioFileException e) {
-			JOptionPane.showMessageDialog(frame,
+		} /*catch(UnsupportedAudioFileException e) {
+			JOptionPane.showMessageDialog(MainWindow.window.frame,
 				    "Cannot open files of that type (sorry)",
 				    "File error",
 				    JOptionPane.ERROR_MESSAGE);
-		}
+		}*/
 		catch(Exception e)
 		{
 			e.printStackTrace();
