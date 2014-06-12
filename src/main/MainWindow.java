@@ -4,7 +4,9 @@ import java.awt.Color;
 import java.awt.EventQueue;
 
 import javax.swing.JColorChooser;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JToolBar;
 import javax.swing.JButton;
 import javax.swing.GroupLayout;
@@ -21,6 +23,10 @@ import com.jgoodies.forms.factories.FormFactory;
 import java.awt.Font;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 import javax.swing.JLabel;
 
@@ -43,7 +49,7 @@ public class MainWindow {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					MainWindow window = new MainWindow();
+					//MainWindow window = new MainWindow();
 					window.frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -107,10 +113,50 @@ public class MainWindow {
 		JButton btnSaveButtonGrid = new JButton("Save button grid");
 		btnSaveButtonGrid.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				JFileChooser fileChooser = new JFileChooser();
+				fileChooser.setFont(MainWindow.mainFont);
+				int status = fileChooser.showOpenDialog(MainWindow.window.frame);
+				if (status == JFileChooser.APPROVE_OPTION) {
+					saveButtonsToFile(fileChooser.getSelectedFile().getAbsolutePath());
+				} else if (status == JFileChooser.CANCEL_OPTION) {
+					System.out.println("canceled");
+
+				}
 			}
 		});
 		btnSaveButtonGrid.setFont(mainFont);
 		toolBar.add(btnSaveButtonGrid);
+		
+		JButton btnRestoreButtonGrid = new JButton("Restore button grid");
+		btnRestoreButtonGrid.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				Object[] options = new Object[] {"Yes, continue", "Cancel"};
+				int value = JOptionPane.showOptionDialog(MainWindow.window.frame,
+						"Restoring from file will OVERWRITE existing button layout \n"
+						+ "Are you sure you want to continue?",
+						"Warning",
+						JOptionPane.YES_NO_OPTION,
+						JOptionPane.WARNING_MESSAGE,
+						null,
+						options,
+						options[0]
+					);
+				if (value == JOptionPane.YES_OPTION) {
+					JFileChooser fileChooser = new JFileChooser();
+					fileChooser.setFont(MainWindow.mainFont);
+					int status = fileChooser.showSaveDialog(MainWindow.window.frame);
+					if (status == JFileChooser.APPROVE_OPTION) {
+						saveButtonsToFile(fileChooser.getSelectedFile().getAbsolutePath());
+					} else if (status == JFileChooser.CANCEL_OPTION) {
+						System.out.println("canceled");
+
+					}
+				} else if (value == JOptionPane.NO_OPTION) {
+				}
+			}
+		});
+		btnRestoreButtonGrid.setFont(mainFont);
+		toolBar.add(btnRestoreButtonGrid);
 		
 		JButton btnAddremoveButtons = new JButton("Add/remove buttons");
 		btnAddremoveButtons.addActionListener(new ActionListener() {
@@ -122,6 +168,7 @@ public class MainWindow {
 		toolBar.add(btnAddremoveButtons);
 		
 		JButton btnChangeColor = new JButton("Change color");
+		btnChangeColor.setFont(mainFont);
 		btnChangeColor.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				ButtonColorChooser.launch();
@@ -131,7 +178,7 @@ public class MainWindow {
 		
 		scrollPane.setViewportView(panel);
 		
-		//loadButtons(rows, cols);
+		loadButtons(rows, cols);
 		
 		frame.getContentPane().setLayout(groupLayout);
 	}
@@ -180,12 +227,13 @@ public class MainWindow {
 				final int colNum = i/2;
 				final int rowNum = c/2;
 				button[rowNum][colNum] = new JButton(rowNum + ", " + colNum + "  Unassigned");
-				button[rowNum][colNum].setFont(mainFont);
+				button[rowNum][colNum].setFont(mainFont.deriveFont(Font.BOLD));
 				button[rowNum][colNum].addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						Sound sound=new Sound();
-						sound.url=MainWindow.sound[rowNum][colNum];
-						sound.run();
+						JOptionPane.showMessageDialog(MainWindow.window.frame,
+							    "That button is not assigned",
+							    "Unassigned button",
+							    JOptionPane.WARNING_MESSAGE);
 					}
 				});
 				panel.add(button[rowNum][colNum], i + "," + c + ", default, fill");
@@ -193,13 +241,39 @@ public class MainWindow {
 		}
 		panel.revalidate();
 	}
-	static void assignFileToButton(String file, int buttonX, int buttonY) {
-		sound[buttonX][buttonY] = file;
+	static void assignFileToButton(final String file, int buttonX, int buttonY) {
+		button[buttonX][buttonY].addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Sound sound=new Sound();
+				sound.url=file;
+				sound.run();
+			}
+		});
 	}
 	static void assignNameToButton(String name, int buttonX, int buttonY) {
 		button[buttonX][buttonY].setText(buttonX + ", " + buttonY + " " + name);
 	}
 	static void assignColorToButton(Color color, int buttonX, int buttonY) {
 		button[buttonX][buttonY].setBackground(color);
+	}
+	static void saveButtonsToFile(String file) {
+		try {
+			FileOutputStream fos = new FileOutputStream(file);
+			ObjectOutputStream oos = new ObjectOutputStream(fos);
+			oos.writeObject(sound);
+			oos.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	static void restoreButtonsFromFile(String file) {
+		try {
+			FileInputStream fis = new FileInputStream(file);
+			ObjectInputStream iis = new ObjectInputStream(fis);
+			sound = (String[][]) iis.readObject();
+			iis.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }

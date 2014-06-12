@@ -57,7 +57,7 @@ public class AssignButton extends JDialog {
 				if (status == JFileChooser.APPROVE_OPTION) {
 					filePath.setText(fileChooser.getSelectedFile().getAbsolutePath());
 				} else if (status == JFileChooser.CANCEL_OPTION) {
-					System.out.println("calceled");
+					System.out.println("canceled");
 
 				}
 			}
