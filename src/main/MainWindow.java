@@ -3,7 +3,6 @@ package main;
 import java.awt.Color;
 import java.awt.EventQueue;
 
-import javax.swing.JColorChooser;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -30,17 +29,15 @@ import java.io.ObjectOutputStream;
 
 import javax.swing.JLabel;
 
-public class MainWindow {
+public class MainWindow implements ActionListener{
 
 	JFrame frame;
 	static JButton[][] button;
 	static JScrollPane scrollPane = new JScrollPane();
 	static Font mainFont = new Font("Liberation Sans", Font.PLAIN, 11);
 	static JPanel panel = new JPanel();
-	static int rows = 10;
-	static int cols = 10;
-	static String[][] sound = new String[rows*2][cols*2];;
 	static MainWindow window = new MainWindow();
+	static JLabel lblReady;
 	
 	/**
 	 * Launch the application.
@@ -49,7 +46,7 @@ public class MainWindow {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					//MainWindow window = new MainWindow();
+					window = new MainWindow();
 					window.frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -77,7 +74,7 @@ public class MainWindow {
 		JToolBar toolBar = new JToolBar();
 		toolBar.setFloatable(false);
 		
-		JLabel lblReady = new JLabel("Ready");
+		lblReady = new JLabel("Ready");
 		GroupLayout groupLayout = new GroupLayout(frame.getContentPane());
 		groupLayout.setHorizontalGroup(
 			groupLayout.createParallelGroup(Alignment.TRAILING)
@@ -115,7 +112,7 @@ public class MainWindow {
 			public void actionPerformed(ActionEvent arg0) {
 				JFileChooser fileChooser = new JFileChooser();
 				fileChooser.setFont(MainWindow.mainFont);
-				int status = fileChooser.showOpenDialog(MainWindow.window.frame);
+				int status = fileChooser.showSaveDialog(MainWindow.window.frame);
 				if (status == JFileChooser.APPROVE_OPTION) {
 					saveButtonsToFile(fileChooser.getSelectedFile().getAbsolutePath());
 				} else if (status == JFileChooser.CANCEL_OPTION) {
@@ -130,6 +127,7 @@ public class MainWindow {
 		JButton btnRestoreButtonGrid = new JButton("Restore button grid");
 		btnRestoreButtonGrid.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				lblReady.setText("Restoring");
 				Object[] options = new Object[] {"Yes, continue", "Cancel"};
 				int value = JOptionPane.showOptionDialog(MainWindow.window.frame,
 						"Restoring from file will OVERWRITE existing button layout \n"
@@ -144,14 +142,16 @@ public class MainWindow {
 				if (value == JOptionPane.YES_OPTION) {
 					JFileChooser fileChooser = new JFileChooser();
 					fileChooser.setFont(MainWindow.mainFont);
-					int status = fileChooser.showSaveDialog(MainWindow.window.frame);
+					int status = fileChooser.showOpenDialog(MainWindow.window.frame);
 					if (status == JFileChooser.APPROVE_OPTION) {
-						saveButtonsToFile(fileChooser.getSelectedFile().getAbsolutePath());
+						restoreButtonsFromFile(fileChooser.getSelectedFile().getAbsolutePath());
 					} else if (status == JFileChooser.CANCEL_OPTION) {
 						System.out.println("canceled");
+						lblReady.setText("Restore Canceled");
 
 					}
 				} else if (value == JOptionPane.NO_OPTION) {
+					lblReady.setText("Ready");
 				}
 			}
 		});
@@ -161,7 +161,7 @@ public class MainWindow {
 		JButton btnAddremoveButtons = new JButton("Add/remove buttons");
 		btnAddremoveButtons.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				AddRemoveButtons.launch(rows, cols);
+				AddRemoveButtons.launch(button.length, button[0].length);
 			}
 		});
 		btnAddremoveButtons.setFont(mainFont);
@@ -178,77 +178,53 @@ public class MainWindow {
 		
 		scrollPane.setViewportView(panel);
 		
-		loadButtons(rows, cols);
+		makeNewButtons(10,10);
 		
 		frame.getContentPane().setLayout(groupLayout);
 	}
-	static void loadButtons(int colsOfButtons, int rowsOfButtons) {
+	void loadButtons() {
+		lblReady.setText("Loading");
+		int colsOfButtons = button.length;
+		int rowsOfButtons = button[0].length;
 		panel.removeAll();
-		rows=rowsOfButtons;
-		cols=colsOfButtons;
 		colsOfButtons*=2;
 		rowsOfButtons*=2;
 		
-		
-		String[][] backup = new String[rowsOfButtons][colsOfButtons];
-		int shorterLength;
-		int shorterWidth;
-		if (backup[0].length<sound[0].length) {
-			shorterLength=backup[0].length;
-		} else {
-			shorterLength=sound[0].length;
-		}
-		if (backup.length<sound.length) {
-			shorterWidth=backup.length;
-		} else {
-			shorterWidth=sound.length;
-		}
-		for (int c =0;c<shorterWidth;c++) {
-			System.arraycopy(sound[c], 0, backup[c], 0, shorterLength);
-		}
-		sound = backup;
-		
-		
-		button = new JButton[rowsOfButtons][colsOfButtons];
 		ColumnSpec[] col = new ColumnSpec[colsOfButtons];
 		for (int i=0; i<colsOfButtons; i+=2) {
-			col[i]=FormFactory.RELATED_GAP_COLSPEC;
-			col[i+1]=FormFactory.DEFAULT_COLSPEC;
+			col[i]=FormFactory.DEFAULT_COLSPEC;
+			col[i+1]=FormFactory.RELATED_GAP_COLSPEC;
 		}
 		RowSpec[] row = new RowSpec[rowsOfButtons];
 		for (int i=0; i<rowsOfButtons; i+=2) {
-			row[i]=FormFactory.RELATED_GAP_ROWSPEC;
-			row[i+1]=RowSpec.decode("max(35dlu;default)");
+			row[i]=RowSpec.decode("max(35dlu;default)");
+			row[i+1]=FormFactory.RELATED_GAP_ROWSPEC;
 		}
 		panel.setLayout(new FormLayout(col, row));
 		
-		for (int c=2; c<=rowsOfButtons; c+=2) {
-			for (int i=2; i<=colsOfButtons; i+=2) {
-				final int colNum = i/2;
-				final int rowNum = c/2;
-				button[rowNum][colNum] = new JButton(rowNum + ", " + colNum + "  Unassigned");
-				button[rowNum][colNum].setFont(mainFont.deriveFont(Font.BOLD));
-				button[rowNum][colNum].addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						JOptionPane.showMessageDialog(MainWindow.window.frame,
-							    "That button is not assigned",
-							    "Unassigned button",
-							    JOptionPane.WARNING_MESSAGE);
-					}
-				});
-				panel.add(button[rowNum][colNum], i + "," + c + ", default, fill");
+		for (int c=0; c<rowsOfButtons; c+=2) {
+			for (int i=0; i<colsOfButtons; i+=2) {
+				panel.add(button[i/2][c/2], (i+1) + "," + (c+1) + ", default, fill");
+				button[i/2][c/2].addActionListener(MainWindow.window);
 			}
 		}
 		panel.revalidate();
+		panel.repaint(); // Just in case
+		lblReady.setText("Ready");
+	}
+	void makeNewButtons(int rowsOfButtons, int colsOfButtons) {
+		button= new JButton[colsOfButtons][rowsOfButtons];
+		for (int rowNum=0; rowNum<rowsOfButtons; rowNum++) {
+			for (int colNum=0; colNum<colsOfButtons; colNum++) {
+				button[rowNum][colNum] = new JButton(rowNum + ", " + colNum + "  Unassigned");
+				button[rowNum][colNum].setFont(mainFont.deriveFont(Font.BOLD));
+				button[rowNum][colNum].setActionCommand("unassigned");
+			}
+		}
+		loadButtons();
 	}
 	static void assignFileToButton(final String file, int buttonX, int buttonY) {
-		button[buttonX][buttonY].addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				Sound sound=new Sound();
-				sound.url=file;
-				sound.run();
-			}
-		});
+		button[buttonX][buttonY].setActionCommand(file);
 	}
 	static void assignNameToButton(String name, int buttonX, int buttonY) {
 		button[buttonX][buttonY].setText(buttonX + ", " + buttonY + " " + name);
@@ -257,23 +233,38 @@ public class MainWindow {
 		button[buttonX][buttonY].setBackground(color);
 	}
 	static void saveButtonsToFile(String file) {
+		lblReady.setText("Saving");
 		try {
 			FileOutputStream fos = new FileOutputStream(file);
 			ObjectOutputStream oos = new ObjectOutputStream(fos);
-			oos.writeObject(sound);
+			oos.writeObject(button);
 			oos.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		lblReady.setText("Ready");
 	}
 	static void restoreButtonsFromFile(String file) {
 		try {
 			FileInputStream fis = new FileInputStream(file);
 			ObjectInputStream iis = new ObjectInputStream(fis);
-			sound = (String[][]) iis.readObject();
+			button = (JButton[][]) iis.readObject();
 			iis.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		window.loadButtons();
 	}
+	public void actionPerformed(ActionEvent ae) {
+		String action = ae.getActionCommand();
+		if (action.equals("unassigned")) {
+			JOptionPane.showMessageDialog(MainWindow.window.frame,
+				    "That button is not assigned",
+				    "Unassigned button",
+				    JOptionPane.WARNING_MESSAGE);
+		} else {
+			Sound.playSound(action);
+		}
+	}
+
 }

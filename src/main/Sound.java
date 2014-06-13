@@ -25,5 +25,9 @@ public class Sound implements Runnable {
 			e.printStackTrace();
 		}
 	}
-
+	static void playSound(String file) {
+		Sound sound=new Sound();
+		sound.url=file;
+		sound.run();
+	}
 }

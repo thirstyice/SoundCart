@@ -93,7 +93,7 @@ public class AddRemoveButtons extends JDialog {
 		JButton btnOk = new JButton("Ok");
 		btnOk.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				MainWindow.loadButtons(Integer.parseInt(widthText.getText()), Integer.parseInt(heightText.getText()));
+				MainWindow.window.makeNewButtons(Integer.parseInt(widthText.getText()), Integer.parseInt(heightText.getText()));
 				dispose();
 			}
 		});
